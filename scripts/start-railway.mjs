@@ -3,7 +3,7 @@ import {startServer} from '../apps/payment-api/src/index.js';
 import {startCheckoutServer} from '../apps/checkout-portal/src/index.js';
 const db=getDatabase();const {defaultMerchant}=runMigrations(db);
 if(!process.env.YOUPI_MERCHANT_API_KEY||!process.env.YOUPI_RECEIVING_UPI)throw Error('Merchant API key and receiving UPI are required.');
-new MerchantRepository(db).update(defaultMerchant.id,{apiKey:process.env.YOUPI_MERCHANT_API_KEY,webhookUrl:null});
+new MerchantRepository(db).update(defaultMerchant.id,{apiKey:process.env.YOUPI_MERCHANT_API_KEY,webhookUrl:null,branding:{...defaultMerchant.branding,appName:'AIIMS Guwahati Fund Collection',trustBadgeText:'AIIMS Guwahati · Test gateway',footerGuarantee:'Payments are verified by the organiser.',subbannerText:'Test checkout · ₹1 payment',sidebarNotice:'Test checkout · ₹1 payment'}});
 const accounts=new ReceivingAccountRepository(db);const existing=accounts.findActiveForMerchant(defaultMerchant.id);
 if(existing&&existing.upiId!==process.env.YOUPI_RECEIVING_UPI)accounts.updateAccount(existing.id,{upiId:process.env.YOUPI_RECEIVING_UPI,payeeName:defaultMerchant.businessName});
 const api=await startServer(Number(process.env.PORT||6100));
