@@ -133,3 +133,6 @@ If integrating from Python, Go, PHP, or Java:
 ### 2. Webhook Signature Verification Algorithm
 - Compute `expectedSig = HMAC-SHA256(merchant.webhookSecret, rawBodyString)`.
 - Compare against header `X-Gateway-Signature` (strip `sha256=` prefix) using a constant-time comparison function to prevent timing attacks.
+
+## Guest manual UPI checkout
+A server-authenticated merchant may create a payment with `method: "MANUAL_UPI"` and `guestCheckout: true`. This opts that session into an account-free hosted page with a direct UPI app link. The server sets the amount and receiving account, and the existing single-slot queue and expiration timer still apply. The browser has no merchant credentials. Submitting a transaction reference produces `MANUAL_REVIEW` / pending verification, never a paid state. Standard sessions continue to require payer authentication. The `metadata.guestCheckout` field is reserved and is overwritten by the server; it cannot opt a session into guest mode.

@@ -467,6 +467,7 @@ export function registerCheckoutRoutes(server, ctx) {
       HttpServer.json(res, 200, {
         id: session.id,
         paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
         orderId: session.orderId,
         amount: toRupeesString(session.amountPaise),
         amountPaise: session.amountPaise.toString(),
@@ -674,10 +675,12 @@ export function registerCheckoutRoutes(server, ctx) {
       }
     }
 
+    if(session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true && upiUri){const guestUri=new URL(upiUri);guestUri.searchParams.set('cu',session.currency||'INR');upiUri=guestUri.toString();}
     const upiServerIndicator = await checkUpiServerHealth(ctx, enabledMethods, sellingMode, session.merchantId);
 
     HttpServer.json(res, 200, {
       paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
       orderId: session.orderId,
       merchantName: merchant?.businessName || 'Merchant',
       amount: toRupeesString(session.amountPaise),
@@ -1175,6 +1178,7 @@ export function registerCheckoutRoutes(server, ctx) {
     if (CLOSED_CHECKOUT_STATES.includes(session.status)) {
       HttpServer.json(res, 200, {
         paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
         status: session.status
       });
       return;
@@ -1393,6 +1397,7 @@ export function registerCheckoutRoutes(server, ctx) {
     if (isCounter) {
       server.broadcastSse('admin_counter_events', 'counter_payment_requested', {
         paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
         orderId: session.orderId,
         amountPaise: session.amountPaise.toString(),
         method: session.method,
@@ -1415,6 +1420,7 @@ export function registerCheckoutRoutes(server, ctx) {
     if (ctx.eventEmitter) {
       ctx.eventEmitter.emit('PAYMENT.METHOD_SWITCHED', {
         paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
         orderId: session.orderId,
         merchantId: session.merchantId,
         fromMethod: previousMethod,
@@ -1429,6 +1435,7 @@ export function registerCheckoutRoutes(server, ctx) {
     HttpServer.json(res, 200, {
       success: true,
       paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
       method: session.method,
       status: session.status,
       timeRemainingSeconds,
@@ -1608,6 +1615,7 @@ export function registerCheckoutRoutes(server, ctx) {
     }
     HttpServer.json(res, 200, {
       paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
       orderId: session.orderId,
       amount: toRupeesString(session.amountPaise),
       amountPaise: session.amountPaise.toString(),
@@ -1642,6 +1650,7 @@ export function registerCheckoutRoutes(server, ctx) {
     HttpServer.json(res, 200, {
       success: true,
       paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
       status: PaymentStatus.EXPIRED
     });
   });
@@ -1699,6 +1708,7 @@ export function registerCheckoutRoutes(server, ctx) {
     if (ctx.eventEmitter) {
       ctx.eventEmitter.emit('PAYMENT.ACTION_TRIGGERED', {
         paymentId: session.id,
+        guestCheckout: session.method === PaymentMethod.MANUAL_UPI && session.metadata?.guestCheckout === true,
         orderId: session.orderId,
         merchantId: session.merchantId,
         action: action || 'ACTION',
