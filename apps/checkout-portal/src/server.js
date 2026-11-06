@@ -1,3 +1,4 @@
+import {renderGuestCheckout} from './guest-checkout.js';
 import http from 'node:http';
 import https from 'node:https';
 import fs from 'node:fs';
@@ -534,7 +535,7 @@ export class CheckoutServer {
         const paymentId = checkoutMatch[1];
         const state = await this.fetchPaymentState(paymentId);
 
-        const rendered = this.renderHtml(paymentId, state);
+        const rendered = state?.guestCheckout === true && state?.method === 'MANUAL_UPI' ? renderGuestCheckout(paymentId, state) : this.renderHtml(paymentId, state);
         res.writeHead(200, {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',

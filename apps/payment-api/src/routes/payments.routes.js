@@ -344,16 +344,17 @@ export function registerPaymentRoutes(server, ctx) {
       }
     }
 
-    // Invariant: Do NOT start payment session timer until customer is authenticated/logged in!
-    // Customer sign in or sign up in the checkout portal is mandatory before slot activation or timer start.
-    // Digital UPI payments MUST ALWAYS start in status INITIATED without acquiring a concurrency slot or timer.
-    // Only physical counter payments (CASH_COUNTER, CARD_COUNTER) start as ACTIVE (they do not use UPI slots).
-    // The only exception for UPI auto-activation is explicit developer test suite flag: body.autoActivate === true.
-    const shouldActivateNow = isCounterPayment || isExplicitTestAutoActivate;
+    // Standard online sessions wait for payer authentication. Merchant-authorized
+    // guest manual-UPI sessions enter the same single-slot queue without a payer account.
+    // A submitted reference remains a claim and never confirms settlement.
+    // Guest mode is explicit, manual-UPI only, and reached after merchant authentication.
+    const guestManualCheckout = requestedMethod === PaymentMethod.MANUAL_UPI && body.guestCheckout === true;
+    const shouldActivateNow = isCounterPayment || isExplicitTestAutoActivate || guestManualCheckout;
     const initialStatus = isCounterPayment ? PaymentStatus.ACTIVE : PaymentStatus.INITIATED;
 
     const sessionMetadata = {
       ...(body.metadata || {}),
+      guestCheckout: guestManualCheckout,
       ...(receivingAccountSnapshot ? { receivingAccountSnapshot } : {})
     };
 
