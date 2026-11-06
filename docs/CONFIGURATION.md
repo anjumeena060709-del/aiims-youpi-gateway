@@ -115,3 +115,6 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 Never commit production `.env` files to source code repositories.
+
+## Railway deployment
+Run `node scripts/start-railway.mjs` with a persistent Railway volume mounted at `/app/data`. The container entrypoint gives that volume to the unprivileged gateway user before dropping root privileges. Set `YOUPI_MERCHANT_API_KEY` as a generated server-only secret and `YOUPI_RECEIVING_UPI` to the receiving VPA. Set `CHECKOUT_PUBLIC_URL` and allowlisted storefront origins to the deployed HTTPS addresses. The Railway launcher runs only the payment API and checkout, rather than the local Cloudflare process supervisor.

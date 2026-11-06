@@ -1685,7 +1685,7 @@
         } else {
           trustBadgeEl.style.display = 'inline-flex';
           if (trustBadgeTextEl) {
-            trustBadgeTextEl.textContent = b.trustBadgeText || `${appName} Verified Business`;
+            trustBadgeTextEl.textContent = b.trustBadgeText || `${appName} Test checkout`;
           }
         }
       }
@@ -1699,7 +1699,7 @@
         } else {
           subbannerEl.style.display = 'flex';
           if (subbannerTextEl) {
-            subbannerTextEl.textContent = b.subbannerText || b.sidebarNotice || `Verified & Protected by ${appName}`;
+            subbannerTextEl.textContent = b.subbannerText || b.sidebarNotice || 'Submit your payment reference for review';
           }
         }
       }
@@ -1758,7 +1758,7 @@
         } else {
           pcSocialWrap.style.display = 'flex';
           if (pcSocialProof) {
-            pcSocialProof.textContent = b.subbannerText || b.sidebarNotice || `500+ orders last month from ${data.merchantName || 'Merchant'}`;
+            pcSocialProof.textContent = b.subbannerText || b.sidebarNotice || 'Test checkout · Manual payment review';
           }
         }
       }
@@ -1902,16 +1902,16 @@
         if (splashDefaultShield) splashDefaultShield.style.display = 'none';
       }
       if (splashSecuredText) {
-        splashSecuredText.textContent = b.hidePoweredBy ? (b.appName || '256-Bit Bank Encryption') : (b.appName || 'YouPI PG');
+        splashSecuredText.textContent = b.hidePoweredBy ? (b.appName || 'organiser payment review') : (b.appName || 'YouPI PG');
       }
 
       // 12. Legal Disclaimer Strip
       const legalDisclaimerEl = document.getElementById('footerLegalDisclaimer');
       if (legalDisclaimerEl) {
         if (b.hidePoweredBy) {
-          legalDisclaimerEl.innerHTML = `Secured by 256-Bit Bank Encryption &bull; <span style="text-decoration:underline; cursor:pointer;" onclick="openHelpModal()">Privacy &amp; Terms</span>`;
+          legalDisclaimerEl.innerHTML = `Payments reviewed by the organiser &bull; <span style="text-decoration:underline; cursor:pointer;" onclick="openHelpModal()">Privacy &amp; Terms</span>`;
         } else {
-          legalDisclaimerEl.innerHTML = `Secured by ${escapeHtml(appName)} &amp; 256-Bit Bank Encryption &bull; <span style="text-decoration:underline; cursor:pointer;" onclick="openHelpModal()">Privacy Notice</span>`;
+          legalDisclaimerEl.innerHTML = `Payment review by ${escapeHtml(appName)} &bull; <span style="text-decoration:underline; cursor:pointer;" onclick="openHelpModal()">Privacy Notice</span>`;
         }
       }
 

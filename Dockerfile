@@ -5,7 +5,7 @@
 
 # ── Stage 0: Base ────────────────────────────────────────────────────────────
 FROM node:24-alpine@sha256:429bdfbc204b4eabc6438e6d34e4e9d8dd2ca1df8289bcd78cdd3c5db387b7a5 AS base
-RUN apk update && apk upgrade --no-cache && apk add --no-cache libc6-compat
+RUN apk update && apk upgrade --no-cache && apk add --no-cache libc6-compat su-exec
 WORKDIR /app
 
 # ── Stage 1: Dependencies ───────────────────────────────────────────────────
@@ -77,12 +77,13 @@ COPY --from=builder --chown=youpi:youpi /app ./
 
 # Setup data persistence directory for native SQLite
 RUN mkdir -p /app/data && chown -R youpi:youpi /app/data
-VOLUME ["/app/data"]
+# Persistent storage is mounted by Railway at /app/data.
 
 # Expose all 7 services
 EXPOSE 5000 6001 6002 6003 6100 7000 8090
 
-USER youpi
+RUN chmod 755 /app/scripts/railway-entrypoint.sh
+ENTRYPOINT ["/app/scripts/railway-entrypoint.sh"]
 
 # Native healthcheck pinging core payment api
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
